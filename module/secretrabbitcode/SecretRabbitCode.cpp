@@ -16,4 +16,9 @@
 
 namespace SecretRabbitCode
 {
+    #include "coefficients/CoefficientList.h"
+    #include "coefficients/FastestCoefficients.h"
+    #include "coefficients/HighQualityCoefficients.h"
+    #include "coefficients/MidQualityCoefficients.h"
+    #include "coefficients/DefaultCoefficientInitialiser.h"
 }

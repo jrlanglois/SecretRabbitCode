@@ -27,6 +27,7 @@
                 ],
 
     "browse":   [
-                    "core/*"
+                    "core/*",
+                    "coefficients/*"
                 ]
 }
