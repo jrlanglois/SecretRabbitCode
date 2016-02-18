@@ -4,16 +4,23 @@
 class CoefficientList
 {
 public:
-    CoefficientList (int stepping) :
-        step (stepping)
-    {
-    }
-
     CoefficientList (int stepping, const double* sourceCoefficients, int numberOfElements) :
         step (stepping)
     {
         setFrom (sourceCoefficients, numberOfElements);
     }
+
+    inline int getStepping() const noexcept { return step; }
+
+    inline int getSize() const noexcept { return coefficients.size(); }
+
+    inline double operator[] (int index) const { return coefficients[index]; }
+
+    inline double getUnchecked (int index) const { return coefficients.getUnchecked (index); }
+
+private:
+    const int step;
+    Array<double> coefficients;
 
     void setFrom (const double* sourceCoefficients, int numberOfElements)
     {
@@ -23,16 +30,7 @@ public:
         coefficients.insertArray (0, sourceCoefficients, numberOfElements);
     }
 
-    int getStepping() const noexcept { return step; }
-
-    double operator[] (int index) const { return coefficients[index]; }
-
-    double getUnchecked (int index) const { return coefficients.getUnchecked (index); }
-
-private:
-    int step;
-    Array<double> coefficients;
-
+    CoefficientList() JUCE_DELETED_FUNCTION;
     JUCE_DECLARE_NON_COPYABLE (CoefficientList)
 };
 
