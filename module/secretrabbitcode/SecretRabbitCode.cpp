@@ -21,4 +21,8 @@ namespace SecretRabbitCode
     #include "coefficients/HighQualityCoefficients.h"
     #include "coefficients/MidQualityCoefficients.h"
     #include "coefficients/DefaultCoefficientInitialiser.h"
+
+    #include "core/Resampler.cpp"
+    #include "core/LinearResampler.cpp"
+    #include "core/ZeroOrderHoldResampler.cpp"
 }

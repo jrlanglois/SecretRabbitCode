@@ -12,10 +12,10 @@ namespace SecretRabbitCode
     using namespace juce;
     using juce::MemoryBlock;
 
-    #include "core/LinearSampleRateConverter.h"
-    #include "core/SampleRateConverter.h"
-    #include "core/SincSampleRateConverters.h"
-    #include "core/ZeroOrderHoldSampleRateConverter.h"
+    #include "core/LinearResampler.h"
+    #include "core/Resampler.h"
+    #include "core/SincResamplers.h"
+    #include "core/ZeroOrderHoldResampler.h"
 }
 
 #endif //SECRETRABBITCODE_MODULE_HEADER_H
