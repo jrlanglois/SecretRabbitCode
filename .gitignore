@@ -1,57 +1,63 @@
-# *.cm* # This line is broken it matches all files.
-*.dat
-*.gz
-*.la
-*.lo
-*.mat
-*.o
-*.s
-*.wav
-.depend
-.deps
-.libs
-build-aux/
-Hack
-Images
-m4/libtool.m4
-m4/ltoptions.m4
-m4/ltsugar.m4
-m4/ltversion.m4
-m4/lt~obsolete.m4
-Makefile
-Makefile.in
-Octave/*.h
-Octave/make_quad_filter
-Octave/make_src_filter
-Win32/Makefile.mingw
-aclocal.m4
-autom4te.cache
-libsamplerate-*.tar.bz2
-compile
-config.*
-!/config.h.in
-configure
-depcomp
-doc/ChangeLog
-doc/NEWS
-examples/sndfile-resample
-examples/timewarp-file
-examples/varispeed-play
-install-sh
-libsamplerate.spec
-libtool
-localinstall.py
-ltmain.sh
-missing
-samplerate.pc
-src/Version_script
-src/config.h
-src/config.h.in
-stamp-h1
-.dirstamp
-tests/*_test
-tests/benchmark
-tests/src-evaluate
+# Windows Temp Cache Files
+[Tt]humbs.db
+ 
+#Visual Studio files
+*.[Oo]bj
+*.aps
+*.pch
+*.vspscc
+*.vssscc
+*_i.c
+*_p.c
+*.ncb
+*.suo
+*.tlb
+*.tlh
+*.bak
+*.[Cc]ache
+*.ilk
 *.log
-*.trs
+*.lib
+*.sbr
+*.sdf
+*.opensdf
+ipch/
+obj/
+x64/
+[Bb]in
+[Dd]ebug*/
+[Rr]elease*/
+ 
+ # Mac OS X Finder and whatnot
+.DS_Store
+*.DS_Store
+
+# XCode (and ancestors) per-user config (very noisy, and not relevant)
+*.mode1
+*.mode1v3
+*.mode2v3
+*.perspective
+*.perspectivev3
+*.pbxuser
+xcuserdata
+
+# Generated files
+VersionX-revision.h
+
+# build products
 build/
+*.[oa]
+
+# Other source repository archive directories (protects when importing)
+.hg
+.svn
+CVS
+
+# automatic backup files
+*~.nib
+*.swp
+*~
+*(Autosaved).rtfd/
+Backup[ ]of[ ]*.pages/
+Backup[ ]of[ ]*.key/
+Backup[ ]of[ ]*.numbers/

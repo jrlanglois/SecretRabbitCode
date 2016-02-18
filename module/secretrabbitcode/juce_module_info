@@ -1,0 +1,32 @@
+{
+    "id":           "SecretRabbitCode",
+    "name":         "SecretRabbitCode (aka libsamplerate)",
+    "version":      "1.0.0",
+    "description":  "A simple sample rate converter for audio.",
+    "website":      "http://www.mega-nerd.com/SRC/",
+    "license":      "GPLv2",
+
+    "dependencies": [
+                        { "id": "juce_audio_basics",    "version": "matching" },
+                        { "id": "juce_audio_devices",   "version": "matching" },
+                        { "id": "juce_audio_formats",   "version": "matching" },
+                        { "id": "juce_audio_utils",     "version": "matching" },
+                        { "id": "juce_core",            "version": "matching" },
+                        { "id": "juce_cryptography",    "version": "matching" },
+                        { "id": "juce_data_structures", "version": "matching" },
+                        { "id": "juce_events",          "version": "matching" },
+                        { "id": "juce_graphics",        "version": "matching" },
+                        { "id": "juce_gui_basics",      "version": "matching" }
+                    ],
+
+    "include":  "SecretRabbitCode.h",
+
+    "compile":  [
+                    { "file": "SecretRabbitCode.cpp", "target": "! xcode" },
+                    { "file": "SecretRabbitCode.mm", "target": "xcode" }
+                ],
+
+    "browse":   [
+                    "core/*"
+                ]
+}
