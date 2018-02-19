@@ -11,6 +11,25 @@ public:
     /** Destructor */
     virtual ~Resampler() noexcept;
 
+    /** @returns some kind of Identifier representing this resampler. */
+    virtual Identifier getId() const noexcept = 0;
+
+    /** @returns the name of this type of resampler.
+
+        If subclasses so choose to not override this method,
+        it will just attempt translating the identifier provided by getId().
+
+        @see getId
+    */
+    virtual String getName() const noexcept { return TRANS (getId().toString()); }
+
+    /** @returns the description of this type of resampler.
+
+        If subclasses choose to not override this method,
+        it will just return an empty string.
+    */
+    virtual String getDescription() const noexcept { return {}; }
+
     /**  */
     virtual void prepare (int numChannels, int numSamples, double sampleRate) = 0;
 
@@ -46,6 +65,8 @@ public:
     ~CatmullRomResampler() noexcept;
 
     /** @internal */
+    Identifier getId() const noexcept override { return "Catmull-Rom"; }
+    /** @internal */
     void prepare (int numChannels, int numSamples, double sampleRate) override;
     /** @internal */
     void process (AudioBuffer<float>& source, AudioBuffer<float>& dest, double ratio) override;
@@ -63,6 +84,8 @@ public:
     LagrangeResampler() noexcept;
     ~LagrangeResampler() noexcept;
 
+    /** @internal */
+    Identifier getId() const noexcept override { return "Lagrange"; }
     /** @internal */
     void prepare (int numChannels, int numSamples, double sampleRate) override;
     /** @internal */
@@ -82,12 +105,14 @@ public:
     ~LinearResampler() noexcept;
 
     /** @internal */
+    Identifier getId() const noexcept override { return NEEDS_TRANS ("Linear"); }
+    /** @internal */
     void prepare (int numChannels, int numSamples, double sampleRate) override;
     /** @internal */
     void process (AudioBuffer<float>& source, AudioBuffer<float>& dest, double ratio) override;
 
 private:
-    OwnedArray<LinearInterpolator> resamplers;
+    OwnedArray<Interpolator<LinearInterpolatorAlgorithm>> resamplers;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (LinearResampler)
 };

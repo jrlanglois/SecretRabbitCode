@@ -4,8 +4,8 @@ using namespace SecretRabbitCode;
 
 MainComponent::MainComponent()
 {
-    LinearInterpolator li;
-    li.reset();
+    LinearResampler resampler;
+    DBG (resampler.getDescription());
 
     setSize (600, 400);
 }

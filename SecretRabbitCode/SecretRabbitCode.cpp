@@ -12,27 +12,41 @@
 namespace SecretRabbitCode
 {
     template<typename FloatType>
-    static forcedinline void pushInterpolationSample (FloatType* lastInputSamples, FloatType newValue = (FloatType) 0) noexcept
+    static forcedinline void pushInterpolationSample (FloatType* lastInputSamples, FloatType newValue = ValueConstants<FloatType>::zero) noexcept
     {
+       #if 0
         lastInputSamples[4] = lastInputSamples[3];
         lastInputSamples[3] = lastInputSamples[2];
         lastInputSamples[2] = lastInputSamples[1];
         lastInputSamples[1] = lastInputSamples[0];
+       #else
+        constexpr auto rotationLength = numStokeSamples - 1;
+        auto arrayEnd = lastInputSamples + rotationLength;
+
+        std::rotate (lastInputSamples, arrayEnd, arrayEnd);
+       #endif
+
         lastInputSamples[0] = newValue;
+    }
+
+    template<typename FloatType>
+    static forcedinline void pushInput (FloatType* lastInputSamples, const FloatType* input, int numSamplesToPush) noexcept
+    {
+        for (int i = 0; i < numSamplesToPush; ++i)
+            pushInterpolationSample (lastInputSamples, input[i]);
     }
 
     template<typename FloatType>
     static forcedinline void pushInterpolationSamples (FloatType* lastInputSamples, const FloatType* input, int numOut) noexcept
     {
-        if (numOut >= 5)
+        if (numOut >= numStokeSamples)
         {
-            for (int i = 0; i < 5; ++i)
+            for (int i = 0; i < numStokeSamples; ++i)
                 lastInputSamples[i] = input[--numOut];
         }
         else
         {
-            for (int i = 0; i < numOut; ++i)
-                pushInterpolationSample (lastInputSamples, input[i]);
+            pushInput (lastInputSamples, input, numOut);
         }
     }
 
@@ -40,11 +54,11 @@ namespace SecretRabbitCode
     static forcedinline void pushInterpolationSamples (FloatType* lastInputSamples, const FloatType* input,
                                                        int numOut, int available, int wrapAround) noexcept
     {
-        if (numOut >= 5)
+        if (numOut >= numStokeSamples)
         {
-            if (available >= 5)
+            if (available >= numStokeSamples)
             {
-                for (int i = 0; i < 5; ++i)
+                for (int i = 0; i < numStokeSamples; ++i)
                     lastInputSamples[i] = input[--numOut];
             }
             else
@@ -56,13 +70,13 @@ namespace SecretRabbitCode
                 {
                     numOut -= wrapAround;
 
-                    for (int i = available; i < 5; ++i)
+                    for (int i = available; i < numStokeSamples; ++i)
                         lastInputSamples[i] = input[--numOut];
                 }
                 else
                 {
-                    for (int i = available; i < 5; ++i)
-                        lastInputSamples[i] = 0.0f;
+                    for (int i = available; i < numStokeSamples; ++i)
+                        lastInputSamples[i] = ValueConstants<FloatType>::zero;
                 }
             }
         }
@@ -70,8 +84,7 @@ namespace SecretRabbitCode
         {
             if (numOut > available)
             {
-                for (int i = 0; i < available; ++i)
-                    pushInterpolationSample (lastInputSamples, input[i]);
+                pushInput (lastInputSamples, input, available);
 
                 if (wrapAround > 0)
                 {
@@ -86,8 +99,7 @@ namespace SecretRabbitCode
             }
             else
             {
-                for (int i = 0; i < numOut; ++i)
-                    pushInterpolationSample (lastInputSamples, input[i]);
+                pushInput (lastInputSamples, input, numOut);
             }
         }
     }
@@ -98,9 +110,9 @@ namespace SecretRabbitCode
     {
         auto pos = subSamplePos;
 
-        if (actualRatio == 1.0 && pos == 1.0)
+        if (actualRatio == ValueConstants<FloatType>::one && pos == ValueConstants<FloatType>::one)
         {
-            memcpy (out, in, (size_t) numOut * sizeof (FloatType));
+            FloatVectorOperations::copy (out, in, numOut);
             pushInterpolationSamples (lastInputSamples, in, numOut);
             return numOut;
         }
@@ -109,10 +121,10 @@ namespace SecretRabbitCode
 
         while (numOut > 0)
         {
-            while (pos >= 1.0)
+            while (pos >= ValueConstants<FloatType>::one)
             {
                 pushInterpolationSample (lastInputSamples, in[numUsed++]);
-                pos -= 1.0;
+                pos -= ValueConstants<FloatType>::one;
             }
 
             *out++ = InterpolatorType::valueAtOffset (lastInputSamples, (FloatType) pos);
@@ -128,21 +140,21 @@ namespace SecretRabbitCode
     static int interpolate (FloatType* lastInputSamples, double& subSamplePos, double actualRatio,
                             const FloatType* in, FloatType* out, int numOut, int available, int wrap) noexcept
     {
-        if (actualRatio == 1.0)
+        if (actualRatio == ValueConstants<FloatType>::one)
         {
             if (available >= numOut)
             {
-                memcpy (out, in, (size_t) numOut * sizeof (FloatType));
+                FloatVectorOperations::copy (out, in, numOut);
                 pushInterpolationSamples (lastInputSamples, in, numOut, available, wrap);
             }
             else
             {
-                memcpy (out, in, (size_t) available * sizeof (FloatType));
+                FloatVectorOperations::copy (out, in, available);
                 pushInterpolationSamples (lastInputSamples, in, numOut, available, wrap);
 
                 if (wrap > 0)
                 {
-                    memcpy (out + available, in + available - wrap, (size_t) (numOut - available) * sizeof (FloatType));
+                    FloatVectorOperations::copy (out + available, in + available - wrap, numOut - available);
                     pushInterpolationSamples (lastInputSamples, in, numOut, available, wrap);
                 }
                 else
@@ -159,11 +171,11 @@ namespace SecretRabbitCode
         auto pos = subSamplePos;
         bool exceeded = false;
 
-        if (actualRatio < 1.0)
+        if (actualRatio < ValueConstants<FloatType>::one)
         {
             for (int i = numOut; --i >= 0;)
             {
-                if (pos >= 1.0)
+                if (pos >= ValueConstants<FloatType>::one)
                 {
                     if (exceeded)
                     {
@@ -187,7 +199,7 @@ namespace SecretRabbitCode
                         }
                     }
 
-                    pos -= 1.0;
+                    pos -= ValueConstants<FloatType>::one;
                 }
 
                 *out++ = InterpolatorType::valueAtOffset (lastInputSamples, (FloatType) pos);
@@ -222,11 +234,11 @@ namespace SecretRabbitCode
                         }
                     }
 
-                    pos += 1.0;
+                    pos += ValueConstants<FloatType>::one;
                 }
 
                 pos -= actualRatio;
-                *out++ = InterpolatorType::valueAtOffset (lastInputSamples, jmax (0.0f, 1.0f - (FloatType) pos));
+                *out++ = InterpolatorType::valueAtOffset (lastInputSamples, jmax (ValueConstants<FloatType>::zero, ValueConstants<FloatType>::one - (FloatType) pos));
             }
         }
 
@@ -239,7 +251,7 @@ namespace SecretRabbitCode
                                   const FloatType* in, FloatType* out, int numOut,
                                   int available, int wrap, FloatType gain) noexcept
     {
-        if (actualRatio == 1.0)
+        if (actualRatio == ValueConstants<FloatType>::one)
         {
             if (available >= numOut)
             {
@@ -270,11 +282,11 @@ namespace SecretRabbitCode
         auto pos = subSamplePos;
         bool exceeded = false;
 
-        if (actualRatio < 1.0)
+        if (actualRatio < ValueConstants<FloatType>::one)
         {
             for (int i = numOut; --i >= 0;)
             {
-                if (pos >= 1.0)
+                if (pos >= ValueConstants<FloatType>::one)
                 {
                     if (exceeded)
                     {
@@ -333,11 +345,11 @@ namespace SecretRabbitCode
                         }
                     }
 
-                    pos += 1.0;
+                    pos += ValueConstants<FloatType>::one;
                 }
 
                 pos -= actualRatio;
-                *out++ += gain * InterpolatorType::valueAtOffset (lastInputSamples, jmax (0.0f, 1.0f - (FloatType) pos));
+                *out++ += gain * InterpolatorType::valueAtOffset (lastInputSamples, jmax (ValueConstants<FloatType>::zero, ValueConstants<FloatType>::one - (FloatType) pos));
             }
         }
 
@@ -351,7 +363,7 @@ namespace SecretRabbitCode
     {
         auto pos = subSamplePos;
 
-        if (actualRatio == 1.0 && pos == 1.0)
+        if (actualRatio == ValueConstants<FloatType>::one && pos == 1.0)
         {
             FloatVectorOperations::addWithMultiply (out, in, gain, numOut);
             pushInterpolationSamples (lastInputSamples, in, numOut);
@@ -362,7 +374,7 @@ namespace SecretRabbitCode
 
         while (numOut > 0)
         {
-            while (pos >= 1.0)
+            while (pos >= ValueConstants<FloatType>::one)
             {
                 pushInterpolationSample (lastInputSamples, in[numUsed++]);
                 pos -= 1.0;
@@ -383,7 +395,8 @@ namespace SecretRabbitCode
     #include "coefficients/MidQualityCoefficients.h"
     #include "coefficients/DefaultCoefficientInitialiser.h"
 
-    #include "core/Resampler.cpp"
     #include "core/LinearInterpolator.cpp"
+    #include "core/Resampler.cpp"
+    #include "core/SincInterpolator.cpp"
     #include "core/ZeroOrderHoldResampler.cpp"
 }
