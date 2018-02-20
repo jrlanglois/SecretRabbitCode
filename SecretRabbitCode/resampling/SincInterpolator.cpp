@@ -1,5 +1,5 @@
 SincInterpolator::SincInterpolator() noexcept { reset(); }
-SincInterpolator::~SincInterpolator() noexcept {}
+SincInterpolator::~SincInterpolator() noexcept { }
 
 void SincInterpolator::reset() noexcept
 {

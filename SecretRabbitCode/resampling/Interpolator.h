@@ -15,8 +15,11 @@ template<typename InterpolationAlgorithm>
 class Interpolator
 {
 public:
+    /** Constructor. */
     Interpolator() noexcept { reset(); }
-    ~Interpolator() noexcept {}
+
+    /** Destructor. */
+    ~Interpolator() noexcept { }
 
     /** Resets the state of the interpolator.
 
@@ -35,10 +38,10 @@ public:
         @param speedRatio                   The number of input samples to use for each output sample
         @param inputSamples                 The source data to read from. This must contain at
                                             least (speedRatio * numOutputSamplesToProduce) samples.
-        @param outputSamples                The buffer to write the results into
+        @param outputSamples                The buffer to write the results into..
         @param numOutputSamplesToProduce    The number of output samples that should be created
 
-        @returns the actual number of input samples that were used
+        @returns the actual number of input samples that were used.
     */
     int process (double speedRatio,
                  const float* inputSamples,
@@ -56,7 +59,7 @@ public:
                                             least (speedRatio * numOutputSamplesToProduce) samples.
         @param outputSamples                The buffer to write the results into.
         @param numOutputSamplesToProduce    The number of output samples that should be created.
-        @param available                    the number of available input samples. If it needs more samples
+        @param available                    The number of available input samples. If it needs more samples
                                             than available, it either wraps back for wrapAround samples, or
                                             it feeds zeroes.
         @param wrapAround                   If the stream exceeds available samples, it wraps back for wrapAround samples.
@@ -75,15 +78,15 @@ public:
 
     /** Resamples a stream of samples, adding the results to the output data with a gain.
 
-        @param speedRatio       the number of input samples to use for each output sample
-        @param inputSamples     the source data to read from. This must contain at
+        @param speedRatio       The number of input samples to use for each output sample.
+        @param inputSamples     The source data to read from. This must contain at
                                 least (speedRatio * numOutputSamplesToProduce) samples.
-        @param outputSamples    the buffer to write the results to - the result values will be added
+        @param outputSamples    The buffer to write the results to - the result values will be added
                                 to any pre-existing data in this buffer after being multiplied by
-                                the gain factor
-        @param numOutputSamplesToProduce    the number of output samples that should be created
-        @param gain             a gain factor to multiply the resulting samples by before
-                                adding them to the destination buffer
+                                the gain factor.
+        @param numOutputSamplesToProduce   The number of output samples that should be created.
+        @param gain             A gain factor to multiply the resulting samples by before
+                                adding them to the destination buffer.
 
         @returns the actual number of input samples that were used
     */

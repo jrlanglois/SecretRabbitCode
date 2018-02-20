@@ -13,7 +13,7 @@ public:
     /** @internal */
     void prepare (int numChannels, int numSamples, double sampleRate) override;
     /** @internal */
-    void process (AudioBuffer<float>& source, AudioBuffer<float>& dest, double ratio) override;
+    void process (double ratio, AudioBuffer<float>& source, AudioBuffer<float>& dest) override;
 
 private:
     //==============================================================================

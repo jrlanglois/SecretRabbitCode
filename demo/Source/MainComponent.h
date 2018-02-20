@@ -7,9 +7,11 @@ class MainComponent : public Component
 {
 public:
     MainComponent();
+
     ~MainComponent();
 
     //==============================================================================
+    /** @internal */
     void resized() override;
 
 private:

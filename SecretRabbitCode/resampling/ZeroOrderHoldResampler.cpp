@@ -7,6 +7,6 @@ void ZeroOrderHoldResampler::prepare (int, int, double)
 {
 }
 
-void ZeroOrderHoldResampler::process (AudioBuffer<float>&, AudioBuffer<float>&, double)
+void ZeroOrderHoldResampler::process (double, AudioBuffer<float>&, AudioBuffer<float>&)
 {
 }

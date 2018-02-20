@@ -3,7 +3,7 @@
 class SecretRabbitCodeApplication : public JUCEApplication
 {
 public:
-    SecretRabbitCodeApplication() { auto a = SecretRabbitCode::rect (1.5f); DBG (a); }
+    SecretRabbitCodeApplication() { }
 
     //==============================================================================
     const String getApplicationName() override              { return ProjectInfo::projectName; }
